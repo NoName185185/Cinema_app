@@ -10,7 +10,7 @@
 <body>
 
 <nav class="navbar">
-    <a class="navbar__logo" href="{% url 'movies' %}">🎬 CinemaApp</a>
+    <a class="navbar__logo" href="{% url 'movies' %}">CinemaApp</a>
     <ul class="navbar__links">
         <li><a href="{% url 'movies' %}" {% if request.resolver_match.url_name == 'movies' %}class="active"{% endif %}>Афиша</a></li>
         {% if user %}
