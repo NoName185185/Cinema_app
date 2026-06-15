@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация — CinemaApp{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h1 class="auth-card__title">Регистрация</h1>
+
+        <form method="POST" action="{% url 'register' %}" class="auth-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="full_name">Полное имя</label>
+                <input
+                    type="text"
+                    id="full_name"
+                    name="full_name"
+                    placeholder="Иванов Иван Иванович"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="username">Логин</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="ivan_ivanov"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="••••••••"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full">Зарегистрироваться</button>
+        </form>
+
+        <p class="auth-card__footer">
+            Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

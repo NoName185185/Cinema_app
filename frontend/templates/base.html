@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CinemaApp{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<nav class="navbar">
+    <a class="navbar__logo" href="{% url 'movies' %}">🎬 CinemaApp</a>
+    <ul class="navbar__links">
+        <li><a href="{% url 'movies' %}" {% if request.resolver_match.url_name == 'movies' %}class="active"{% endif %}>Афиша</a></li>
+        {% if user %}
+            <li><a href="{% url 'profile' %}" {% if request.resolver_match.url_name == 'profile' %}class="active"{% endif %}>Профиль</a></li>
+            <li>
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-logout">Выйти</button>
+                </form>
+            </li>
+        {% else %}
+            <li><a href="{% url 'login' %}" {% if request.resolver_match.url_name == 'login' %}class="active"{% endif %}>Войти</a></li>
+            <li><a href="{% url 'register' %}" {% if request.resolver_match.url_name == 'register' %}class="active"{% endif %}>Регистрация</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
+<main class="container">
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message message--{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+</main>
+
+</body>
+</html>

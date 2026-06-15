@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профиль — CinemaApp{% endblock %}
+
+{% block content %}
+<div class="profile">
+
+    <!-- Данные пользователя -->
+    <div class="profile__header">
+        <div class="profile__avatar-wrap">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="Аватар" class="profile__avatar">
+            {% else %}
+                <div class="profile__avatar profile__avatar--empty">
+                    {{ user.full_name|first|upper }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="profile__info">
+            <h1 class="profile__name">{{ user.full_name }}</h1>
+            <p class="profile__username">@{{ user.username }}</p>
+        </div>
+    </div>
+
+    <!-- Загрузка аватара -->
+    <div class="profile__section">
+        <h2 class="section-title">Фото профиля</h2>
+        <form method="POST" action="{% url 'avatar_upload' %}" enctype="multipart/form-data" class="avatar-form">
+            {% csrf_token %}
+            <input type="file" name="avatar" id="avatar" accept=".jpg,.jpeg,.png" required>
+            <button type="submit" class="btn btn--primary">Обновить фото</button>
+        </form>
+    </div>
+
+    <!-- Список билетов -->
+    <div class="profile__section">
+        <h2 class="section-title">Мои билеты</h2>
+
+        {% if tickets %}
+            <div class="tickets-list">
+                {% for ticket in tickets %}
+                <div class="ticket-card {% if ticket.status == 'refunded' %}ticket-card--refunded{% endif %}">
+                    <div class="ticket-card__poster">
+                        <img src="{% static ticket.movie.poster_path %}" alt="{{ ticket.movie.title }}">
+                    </div>
+
+                    <div class="ticket-card__info">
+                        <h3 class="ticket-card__title">{{ ticket.movie.title }}</h3>
+                        <ul class="ticket-card__details">
+                            <li><span>Дата сеанса:</span> {{ ticket.show_date }}</li>
+                            <li><span>Билетов:</span> {{ ticket.quantity }} шт.</li>
+                            <li><span>Итого:</span> {{ ticket.total_price }} ₸</li>
+                            <li>
+                                <span>Статус:</span>
+                                {% if ticket.status == 'active' %}
+                                    <span class="badge badge--active">Активен</span>
+                                {% else %}
+                                    <span class="badge badge--refunded">Возвращён</span>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+
+                    {% if ticket.status == 'active' %}
+                    <div class="ticket-card__actions">
+                        <form method="POST" action="{% url 'refund_ticket' ticket.id %}">
+                            {% csrf_token %}
+                            <button
+                                type="submit"
+                                class="btn btn--danger"
+                                onclick="return confirm('Оформить возврат билета?')"
+                            >
+                                Вернуть билет
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>У вас ещё нет купленных билетов.</p>
+                <a href="{% url 'movies' %}" class="btn btn--primary">Перейти к афише</a>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
